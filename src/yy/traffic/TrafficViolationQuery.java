@@ -6,18 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import yy.common.Logger;
 import yy.common.ResourceBundleUtil;
 import yy.http.Constant;
 import yy.http.WebContainer;
 
 public class TrafficViolationQuery {
 
+    private Logger logger = new Logger(TrafficViolationQuery.class);
     /**
      * 查询违章明细
      *
      * @throws Exception
      */
-    public void queryDetailViolation() throws Exception {
+    public String queryDetailViolation() throws Exception {
         WebContainer wc = new WebContainer("GBK");
         Map<String, String> params = new HashMap<String, String>();
         ResourceBundleUtil resourceBundleUtil = ResourceBundleUtil.getInstance();
@@ -35,10 +37,30 @@ public class TrafficViolationQuery {
             // 然后再第二次请求普通的url即可。
             String page = wc.postRequest("http://www.tjits.cn/wfcx/vehiclelist.asp", paramsPost);
             List<TrafficViolationVO> trafficViolationVOList = parseDetailPageInfo(page);
-            System.out.println(trafficViolationVOList);
-            // vehicledetailb.asp
+            logger.log(trafficViolationVOList);
+            StringBuilder sb = new StringBuilder();
+            for(TrafficViolationVO trafficViolationVO:trafficViolationVOList){
+                sb.append(makeWords(trafficViolationVO));
+                sb.append("\r\n");
+            }
+            return sb.toString();
         }
         wc.shutDownCon();
+        return "未找到违章记录！";
+    }
+
+    private String makeWords(TrafficViolationVO trafficViolationVO){
+         StringBuilder sb = new StringBuilder("牌照号：");
+         sb.append(trafficViolationVO.getHphm());
+         sb.append("于");
+         sb.append(trafficViolationVO.getWfsj());
+         sb.append(",在");
+         sb.append(trafficViolationVO.getWfdz());
+         sb.append("违反规定：");
+         sb.append(trafficViolationVO.getWfxw());
+         sb.append("。处罚单位：");
+         sb.append(trafficViolationVO.getCjjg());
+         return sb.toString();
     }
 
     /**
@@ -46,7 +68,7 @@ public class TrafficViolationQuery {
      *
      * @throws Exception
      */
-    public void queryViolation() throws Exception {
+    public String queryViolation() throws Exception {
         WebContainer wc = new WebContainer("GBK");
         wc.setReferUrl("http://www.tjits.cn/wfcx/index.asp");
         Map<String, String> paramsPost = new HashMap<String, String>();
@@ -59,7 +81,8 @@ public class TrafficViolationQuery {
         String page = wc.postRequest("http://www.tjits.cn/wfcx/vehiclelist.asp", paramsPost);
        // System.out.println(page);
         String msg = parsePageInfo(page);
-        System.out.println(msg);
+        logger.log(msg);
+        return msg;
     }
 
     private boolean validateLogon(String page) {
@@ -69,10 +92,10 @@ public class TrafficViolationQuery {
         return false;
     }
 
-    private String parsePageInfo(String page) {
+    public String parsePageInfo(String page) {
         Matcher matcherMsg = Constant.PATTERN_ERORMSG.matcher(page);
         if (matcherMsg.find()) {
-            return matcherMsg.group();
+            return "目前违章记录总数为：" + matcherMsg.group(1);
         }
         return "";
     }
@@ -111,6 +134,8 @@ public class TrafficViolationQuery {
 //        br.close();
 //        fr.close();
 //        System.out.println(tvq.parseDetailPageInfo(sb.toString()));
+  //      tvq.queryViolation();
         tvq.queryDetailViolation();
+    //    System.out.println(tvq.parsePageInfo("您查询的<font color=\"#FF0000\">津NYL723</font>共有<font color=red>1</font>条违法记录"));
     }
 }

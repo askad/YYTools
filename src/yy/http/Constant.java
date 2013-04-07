@@ -14,7 +14,8 @@ public class Constant {
                 new BasicHeader("Content-Type", "application/x-www-form-urlencoded"),
                 new BasicHeader("Connection", "keep-alive"),
                 //new BasicHeader("Host", url),
-                new BasicHeader("Cache-Control", "no-cache"), new BasicHeader("Accept-Encoding", "gzip, deflate") };
+                new BasicHeader("Cache-Control", "no-cache") };
+                //new BasicHeader("Accept-Encoding", "gzip, deflate")
         return headers;
     }
 
@@ -31,5 +32,5 @@ public class Constant {
 "<input type=\"hidden\" name=\"qrydept\" value=\"(.*?)\">.*?"+
 "<input type=\"hidden\" name=\"CJJG\" value=\"(.*?)\">";
     public final static Pattern PATTERN_WZ = Pattern.compile(ALL_PARA_WZ,Pattern.DOTALL);
-    public final static Pattern PATTERN_ERORMSG = Pattern.compile("您查询的(.*?)共有(.*?)条违法记录");
+    public final static Pattern PATTERN_ERORMSG = Pattern.compile("您查询的<font color=\"#FF0000\">.*?</font>共有<font color=red>(.*?)</font>条违法记录");
 }

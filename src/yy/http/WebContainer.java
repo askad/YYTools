@@ -32,7 +32,7 @@ import yy.common.Logger;
 
 public class WebContainer {
 
-    private Logger logger = new Logger();
+    private Logger logger = new Logger(WebContainer.class);
 
     private String encoding;
     private String referUrl;
