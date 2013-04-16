@@ -20,7 +20,7 @@ public class TrafficViolationQuery {
      * @throws Exception
      */
     public String queryDetailViolation() throws Exception {
-        WebContainer wc = new WebContainer("GBK");
+        WebContainer wc = new WebContainer(Constant.ENCODING_GBK);
         Map<String, String> params = new HashMap<String, String>();
         ResourceBundleUtil resourceBundleUtil = ResourceBundleUtil.getInstance();
         params.put("username", resourceBundleUtil.getStringUTF8("username"));
@@ -69,7 +69,7 @@ public class TrafficViolationQuery {
      * @throws Exception
      */
     public String queryViolation() throws Exception {
-        WebContainer wc = new WebContainer("GBK");
+        WebContainer wc = new WebContainer(Constant.ENCODING_GBK);
         wc.setReferUrl("http://www.tjits.cn/wfcx/index.asp");
         Map<String, String> paramsPost = new HashMap<String, String>();
         ResourceBundleUtil resourceBundleUtil = ResourceBundleUtil.getInstance();

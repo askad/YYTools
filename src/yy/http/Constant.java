@@ -21,6 +21,7 @@ public class Constant {
 
     public final static String ENTER="\n";
     public final static String ENCODING_UTF="UTF-8";
+    public final static String ENCODING_GBK="GBK";
     public final static String CONFIG_PATH = "resource";
 
     public final static String ALL_PARA_WZ="<input type=\"hidden\" name=\"HPHM\" value=\"(.*?)\">.*?"+

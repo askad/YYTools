@@ -23,7 +23,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -55,7 +54,8 @@ public class WebContainer {
     }
 
     public String logonSession(String url, Map<String, String> params) throws Exception {
-        httpclient = new DefaultHttpClient(new ThreadSafeClientConnManager());
+
+        httpclient = YYClientConnManagerFactory.getClientConnMangerInstance(encoding);
         HttpPost httpost = new GenHttpPost(url);
         // 添加参数
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();
@@ -93,7 +93,7 @@ public class WebContainer {
         httpost.setEntity(new UrlEncodedFormEntity(nvps, encoding));
 
         if(httpclient==null){
-            httpclient = new DefaultHttpClient(new ThreadSafeClientConnManager());
+            httpclient = YYClientConnManagerFactory.getClientConnMangerInstance(encoding);
         }
         HttpResponse response = httpclient.execute(httpost);
         HttpEntity entity = response.getEntity();
