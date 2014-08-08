@@ -13,10 +13,10 @@ import org.apache.http.params.HttpProtocolParams;
 
 public class YYClientConnManagerFactory {
     public static DefaultHttpClient getClientConnMangerInstance() {
-        return getClientConnMangerInstance(Constant.ENCODING_UTF);
+        return getClientConnMangerInstance(Constant.ENCODING_UTF, false);
     }
 
-    public static DefaultHttpClient getClientConnMangerInstance(String encoding) {
+    public static DefaultHttpClient getClientConnMangerInstance(String encoding, boolean flag) {
 
         HttpParams httpParams = new BasicHttpParams();
         // 版本
@@ -32,6 +32,15 @@ public class YYClientConnManagerFactory {
         // 计划注册,可以注册多个计划
         SchemeRegistry schReg = new SchemeRegistry();
         schReg.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        return new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schReg),httpParams);
+        
+        DefaultHttpClient ht;
+        if (flag) {
+        	ht = WebClientSSLWrapper.wrapClient(new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams,
+                    schReg), httpParams));
+        }else{
+        	ht = new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams, schReg), httpParams);
+        }
+        //ht.getParams().ssetCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        return ht;
     }
 }

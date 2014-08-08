@@ -14,34 +14,35 @@ import yy.http.WebContainer;
 public class TrafficViolationQuery {
 
     private Logger logger = new Logger(TrafficViolationQuery.class);
+
     /**
      * 查询违章明细
      *
      * @throws Exception
      */
-    public String queryDetailViolation() throws Exception {
+    public String queryDetailViolation(String VehicleNo) throws Exception {
         WebContainer wc = new WebContainer(Constant.ENCODING_GBK);
         Map<String, String> params = new HashMap<String, String>();
         ResourceBundleUtil resourceBundleUtil = ResourceBundleUtil.getInstance();
-        params.put("username", resourceBundleUtil.getStringUTF8("username"));
-        params.put("password",  resourceBundleUtil.getStringUTF8("password"));
-        String logonPage = wc.logonSession("http://www.tjits.cn/login.asp", params);
+        params.put(TrafficConstant.RESOUSE_USERNAME, resourceBundleUtil.getStringUTF8(TrafficConstant.RESOUSE_USERNAME));
+        params.put(TrafficConstant.RESOUSE_USERPASS, resourceBundleUtil.getStringUTF8(TrafficConstant.RESOUSE_USERPASS));
+        String logonPage = wc.logonSession(TrafficConstant.URL_LOGIN, params);
         if (validateLogon(logonPage)) {
-            wc.setReferUrl("http://www.tjits.cn/zxjdc.asp");
+            wc.setReferUrl(TrafficConstant.URL_QUERY_REF);
             Map<String, String> paramsPost = new HashMap<String, String>();
             paramsPost.put("lei", "小型汽车");
             paramsPost.put("provice", "津");
-            paramsPost.put("txtVehicleNo", resourceBundleUtil.getStringUTF8("WZPZNO"));
+            paramsPost.put("txtVehicleNo", VehicleNo);
             paramsPost.put("Submit", "查询");
 
             // 然后再第二次请求普通的url即可。
-            String page = wc.postRequest("http://www.tjits.cn/wfcx/vehiclelist.asp", paramsPost);
+            String page = wc.postRequest(TrafficConstant.URL_QUERY, paramsPost);
             List<TrafficViolationVO> trafficViolationVOList = parseDetailPageInfo(page);
             logger.log(trafficViolationVOList);
             StringBuilder sb = new StringBuilder();
-            for(TrafficViolationVO trafficViolationVO:trafficViolationVOList){
+            for (TrafficViolationVO trafficViolationVO : trafficViolationVOList) {
                 sb.append(makeWords(trafficViolationVO));
-                sb.append("\r\n");
+                sb.append(Constant.ENTER_WIN);
             }
             return sb.toString();
         }
@@ -49,18 +50,47 @@ public class TrafficViolationQuery {
         return "未找到违章记录！";
     }
 
-    private String makeWords(TrafficViolationVO trafficViolationVO){
-         StringBuilder sb = new StringBuilder("牌照号：");
-         sb.append(trafficViolationVO.getHphm());
-         sb.append("于");
-         sb.append(trafficViolationVO.getWfsj());
-         sb.append(",在");
-         sb.append(trafficViolationVO.getWfdz());
-         sb.append("违反规定：");
-         sb.append(trafficViolationVO.getWfxw());
-         sb.append("。处罚单位：");
-         sb.append(trafficViolationVO.getCjjg());
-         return sb.toString();
+    /**
+     * 查询违章明细
+     *
+     * @throws Exception
+     */
+    public List<TrafficViolationVO> queryDetailViolationList(String VehicleNo) throws Exception {
+        WebContainer wc = new WebContainer(Constant.ENCODING_GBK);
+        Map<String, String> params = new HashMap<String, String>();
+        ResourceBundleUtil resourceBundleUtil = ResourceBundleUtil.getInstance();
+        params.put(TrafficConstant.RESOUSE_USERNAME, resourceBundleUtil.getStringUTF8(TrafficConstant.RESOUSE_USERNAME));
+        params.put(TrafficConstant.RESOUSE_USERPASS, resourceBundleUtil.getStringUTF8(TrafficConstant.RESOUSE_USERPASS));
+        String logonPage = wc.logonSession(TrafficConstant.URL_LOGIN, params);
+        if (validateLogon(logonPage)) {
+            wc.setReferUrl(TrafficConstant.URL_QUERY_REF);
+            Map<String, String> paramsPost = new HashMap<String, String>();
+            paramsPost.put("lei", "小型汽车");
+            paramsPost.put("provice", "津");
+            paramsPost.put("txtVehicleNo", VehicleNo);
+            paramsPost.put("Submit", "查询");
+
+            // 然后再第二次请求普通的url即可。
+            String page = wc.postRequest(TrafficConstant.URL_QUERY, paramsPost);
+            wc.shutDownCon();
+            return parseDetailPageInfo(page);
+        }
+        wc.shutDownCon();
+        return null;
+    }
+
+    private String makeWords(TrafficViolationVO trafficViolationVO) {
+        StringBuilder sb = new StringBuilder("牌照号：");
+        sb.append(trafficViolationVO.getHphm());
+        sb.append("于");
+        sb.append(trafficViolationVO.getWfsj());
+        sb.append(",在");
+        sb.append(trafficViolationVO.getWfdz());
+        sb.append("违反规定：");
+        sb.append(trafficViolationVO.getWfxw());
+        sb.append("。处罚单位：");
+        sb.append(trafficViolationVO.getCjjg());
+        return sb.toString();
     }
 
     /**
@@ -69,17 +99,37 @@ public class TrafficViolationQuery {
      * @throws Exception
      */
     public String queryViolation() throws Exception {
+        ResourceBundleUtil resourceBundleUtil = ResourceBundleUtil.getInstance();
+        return queryViolation(resourceBundleUtil.getStringUTF8("WZPZNO"));
+    }
+
+    /**
+     * 查询违章明细
+     *
+     * @throws Exception
+     */
+    public String queryDetailViolation() throws Exception {
+        ResourceBundleUtil resourceBundleUtil = ResourceBundleUtil.getInstance();
+        return queryDetailViolation(resourceBundleUtil.getStringUTF8("WZPZNO"));
+    }
+
+    /**
+     * 查询违章
+     *
+     * @throws Exception
+     */
+    public String queryViolation(String vehicleNo) throws Exception {
         WebContainer wc = new WebContainer(Constant.ENCODING_GBK);
         wc.setReferUrl("http://www.tjits.cn/wfcx/index.asp");
         Map<String, String> paramsPost = new HashMap<String, String>();
-        ResourceBundleUtil resourceBundleUtil = ResourceBundleUtil.getInstance();
         paramsPost.put("lei", "小型汽车");
         paramsPost.put("provice", "津");
-        paramsPost.put("txtVehicleNo", resourceBundleUtil.getStringUTF8("WZPZNO"));
+        paramsPost.put("txtVehicleNo", vehicleNo);
 
         // 然后再第二次请求普通的url即可。
         String page = wc.postRequest("http://www.tjits.cn/wfcx/vehiclelist.asp", paramsPost);
-       // System.out.println(page);
+        wc.shutDownCon();
+        // System.out.println(page);
         String msg = parsePageInfo(page);
         logger.log(msg);
         return msg;
@@ -93,9 +143,9 @@ public class TrafficViolationQuery {
     }
 
     public String parsePageInfo(String page) {
-        Matcher matcherMsg = Constant.PATTERN_ERORMSG.matcher(page);
+        Matcher matcherMsg = TrafficConstant.PATTERN_ERORMSG.matcher(page);
         if (matcherMsg.find()) {
-            return "目前违章记录总数为：" + matcherMsg.group(1);
+            return "Totals of the violation record is: " + matcherMsg.group(1);
         }
         return "";
     }
@@ -103,7 +153,7 @@ public class TrafficViolationQuery {
     private List<TrafficViolationVO> parseDetailPageInfo(String page) {
 
         List<TrafficViolationVO> trafficViolationVOList = new ArrayList<TrafficViolationVO>();
-        Matcher matherWZ = Constant.PATTERN_WZ.matcher(page);
+        Matcher matherWZ = TrafficConstant.PATTERN_WZ.matcher(page);
 
         while (matherWZ.find()) {
             TrafficViolationVO trafficViolationVO = new TrafficViolationVO();
@@ -123,19 +173,19 @@ public class TrafficViolationQuery {
 
     public static void main(String[] args) throws Exception {
         TrafficViolationQuery tvq = new TrafficViolationQuery();
-//        File f = new File("d:/a.txt");
-//        FileReader fr = new FileReader(f);
-//        BufferedReader br = new BufferedReader(fr);
-//        StringBuilder sb = new StringBuilder();
-//        String c = null;
-//        while ((c = br.readLine()) != null) {
-//            sb.append(c + "\n");
-//        }
-//        br.close();
-//        fr.close();
-//        System.out.println(tvq.parseDetailPageInfo(sb.toString()));
-  //      tvq.queryViolation();
+        // File f = new File("d:/a.txt");
+        // FileReader fr = new FileReader(f);
+        // BufferedReader br = new BufferedReader(fr);
+        // StringBuilder sb = new StringBuilder();
+        // String c = null;
+        // while ((c = br.readLine()) != null) {
+        // sb.append(c + "\n");
+        // }
+        // br.close();
+        // fr.close();
+        // System.out.println(tvq.parseDetailPageInfo(sb.toString()));
+        // tvq.queryViolation();
         tvq.queryDetailViolation();
-    //    System.out.println(tvq.parsePageInfo("您查询的<font color=\"#FF0000\">津NYL723</font>共有<font color=red>1</font>条违法记录"));
+        // System.out.println(tvq.parsePageInfo("您查询的<font color=\"#FF0000\">津NYL723</font>共有<font color=red>1</font>条违法记录"));
     }
 }

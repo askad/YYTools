@@ -3,14 +3,14 @@ package yy.traffic;
 
 public class TrafficViolationVO {
     // submit 详细情况
-    private String hphm;
-    private String hpzl;
-    private String wfsj;
-    private String wfdd;
-    private String wfdz;
-    private String wfxw;
-    private String qrydept;
-    private String cjjg;
+    private String hphm;// 牌照号
+    private String hpzl;// 小型汽车
+    private String wfsj;// 违章时间 2013-03-29 14:23:00
+    private String wfdd;// 违反code 50005
+    private String wfdz;// 违章地点
+    private String wfxw;// 违反规定
+    private String qrydept; // 南开支队
+    private String cjjg;// 处罚单位
     public String getHphm() {
         return hphm;
     }
