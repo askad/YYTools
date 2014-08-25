@@ -1,4 +1,4 @@
-package yy.common;
+package yy.common.encrypt;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;

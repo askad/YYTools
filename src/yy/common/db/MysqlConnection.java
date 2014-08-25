@@ -1,10 +1,14 @@
-package yy.common;
+package yy.common.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import yy.common.ResourceBundleUtil;
+
+import com.mysql.jdbc.PreparedStatement;
 
 public abstract class MysqlConnection {
 	{
@@ -50,18 +54,25 @@ public abstract class MysqlConnection {
 		}
 	}
 
-	/*
-	 * public int insertData(String sql, BaseVo baseVo) throws Exception {
-	 * Connection conn = getConnection(); // statement用来执行SQL语句
-	 * PreparedStatement statement = (PreparedStatement)
-	 * conn.prepareStatement(sql); setInsertPS(statement, baseVo); // 要执行的SQL语句
-	 * int i = statement.executeUpdate(); closeConn(conn); return i; }
-	 * 
-	 * public List<Object> selectDate(String sql, BaseVo baseVo) throws
-	 * Exception { Connection conn = getConnection(); // statement用来执行SQL语句
-	 * PreparedStatement statement = (PreparedStatement)
-	 * conn.prepareStatement(sql); setSelectPS(statement, baseVo); // 要执行的SQL语句
-	 * ResultSet rs = statement.executeQuery(); List<Object> obj =
-	 * getSelectData(rs); closeConn(conn); return obj; }
-	 */
+	public int insertData(String sql) throws Exception {
+		Connection conn = getConnection(); // statement用来执行SQL语句
+		PreparedStatement statement = (PreparedStatement) conn
+				.prepareStatement(sql);
+		// setInsertPS(statement, baseVo) 要执行的SQL语句
+		int i = statement.executeUpdate();
+		closeConn(conn);
+		return i;
+	}
+
+	public List<Object> selectDate(String sql) throws Exception {
+		Connection conn = getConnection(); // statement用来执行SQL语句
+		PreparedStatement statement = (PreparedStatement) conn
+				.prepareStatement(sql);
+		// setSelectPS(statement, baseVo); // 要执行的SQL语句
+		ResultSet rs = statement.executeQuery();
+		List<Object> obj = getSelectData(rs);
+		closeConn(conn);
+		return obj;
+	}
+
 }

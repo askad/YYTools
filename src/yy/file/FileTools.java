@@ -10,18 +10,7 @@ import java.util.regex.Pattern;
 
 public class FileTools {
 
-    // F4
-//    private final static String URL_TEXT = "doFocus\\(document.getElementById\\('(.+)'\\)\\); changeF4Image\\(";
-    // IE BOX
    private final static String URL_TEXT = "[\"'\\s;=]margin[^a-z]|[\"'\\s;=]padding[^a-z]";
-    // TAB
-//    private final static String URL_TEXT = "class[\\s]*=[\"'\\s;=]tab[^a-z]";
-
-    // SUB FILE
-   // private final static String URL_TEXT = "class[\\s]*=[\"'\\s]fakeContainer[^a-z]";
- //   private final static String URL_TEXT = "id[\\s]*=[\"'\\s]subfh[^a-z]";
-
-//    private final static String SFL_NAME = "S[\\w]+?screensfl.java";
     private final static String SFL_NAME = "S[\\w]+?Form.jsp";
     final static Pattern SFL_P = Pattern.compile(SFL_NAME, Pattern.CASE_INSENSITIVE);
 
@@ -29,17 +18,6 @@ public class FileTools {
 
     public int count=0;
     public List<String> tempL;
-
-    // public static void main(String[] args) throws Exception {
-    // FileTools ft = new FileTools();
-    // File fd = new File("D:/poPages/jsp");
-    // for (File f : fd.listFiles()) {
-    // String content = ft.readFile(f);
-    // if (!ft.parser(content)) {
-    // System.out.println(f.getName());
-    // }
-    // }
-    // }
 
     public boolean parser(String pageContent) throws Exception {
         // return
