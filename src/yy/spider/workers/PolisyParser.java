@@ -26,19 +26,25 @@ public class PolisyParser implements PageParser {
      */
     public static void main(String[] args) throws Exception {
 
-//        File f = new File("4033Form.jsp");
-//        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
-//        String content = null;
-//        StringBuilder sb = new StringBuilder();
-//        while ((content = br.readLine()) != null) {
-//            sb.append(content);
-//        }
-//        br.close();
+        // paramsPost.put("jspno", "S" + getName(i));
+        //paramsPost.put("jspno", form);
+        //paramsPost.put("language", "en");
+
+//        PageHandler pageHandler = new PageHandler("PAGE URL",
+//                "HOST URL", paramsPost, new PolisyParser());
+        // Thread worker = new Thread(pageHandler);
+        // worker.start();
+        // resultRunList.add(pageHandler);
+        // workers.add(worker);
         PolisyParser cbp = new PolisyParser();
         System.out.println( cbp.preParser("              <FRAME style=\"border: 0\" SRC='/PolisyAsiaWeb/polisy/underwriting/eng/S4033Form.jsp' frameborder='0' NAME='mainForm'>"));
 
     }
 
+    public static String getName(int count) {
+        return String.format("%04d", count);
+    }
+    
     @Override
     public Object preParser(String pageContent) throws Exception {
         Matcher matherCP = URL_P.matcher(pageContent);
@@ -98,8 +104,7 @@ public class PolisyParser implements PageParser {
     }
 
 	@Override
-	public Object afterParser(String pageContent) throws Exception {
-		// TODO Auto-generated method stub
+	public Object afterParser(Object pageContent) throws Exception {
 		return null;
 	}
 

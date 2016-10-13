@@ -34,6 +34,7 @@ public class YYClientConnManagerFactory {
         schReg.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
         
         DefaultHttpClient ht;
+        // SSL flag
         if (flag) {
         	ht = WebClientSSLWrapper.wrapClient(new DefaultHttpClient(new ThreadSafeClientConnManager(httpParams,
                     schReg), httpParams));

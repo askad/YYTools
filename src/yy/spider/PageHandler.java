@@ -1,8 +1,6 @@
 package yy.spider;
 
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import yy.common.Logger;
 import yy.http.WebContainer;
@@ -12,22 +10,16 @@ public class PageHandler implements Runnable {
     private Logger logger = new Logger(PageHandler.class);
 
     private String mainPageUrl;
-    private int maxPageCount;
-    private String nextPageReg;
-    private Pattern nextPagePt;
-    private List<String> nextUrls;
-    private boolean lgFlg = false;
+    private boolean lgFlg = false;// need login or not
     private String posturl;
     private Map<String, String> postParams;
     private PageParser pageParser;
     private Object result;
 
-    public PageHandler(String url, PageParser pageParser, String nextPageReg) {
+    public PageHandler(String url, PageParser pageParser) {
         super();
         this.mainPageUrl = url;
         this.pageParser = pageParser;
-        this.nextPageReg = nextPageReg;
-        nextPagePt = Pattern.compile(nextPageReg, Pattern.DOTALL | Pattern.MULTILINE);
     }
 
     @Override
@@ -39,10 +31,10 @@ public class PageHandler implements Runnable {
             if (lgFlg) {
                 pageContent = wc.logonSession(posturl, postParams);
                 tempurl = (String) pageParser.preParser(pageContent);
-            } 
-             pageContent = wc.getRequest(mainPageUrl,null);
-              result = pageParser.parser(pageContent);
-              pageParser.afterParser((String)result);
+            }
+            pageContent = wc.getRequest(mainPageUrl, null);
+            result = pageParser.parser(pageContent);
+            pageParser.afterParser(result);
         } catch (Exception e) {
             logger.log(e.getMessage());
         }

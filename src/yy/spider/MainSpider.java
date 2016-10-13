@@ -1,57 +1,34 @@
 package yy.spider;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
-import yy.spider.workers.PolisyParser;
+import yy.spider.workers.ShaobingParser;
 
 public class MainSpider {
-    String  mainPageUrl = "";
-    int  maxPageCount = 0;
-    boolean  lgFlg  = false;
 
     public void startup() {
-      String  mainPageUrl = "";
-      int  maxPageCount = 0;
-      boolean  lgFlg  = false;
     }
 
     /**
      * @param args
      */
-//    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 //
-//        List<Thread> workers = new ArrayList<Thread>();
-//        List<PageHandler> resultRunList = new ArrayList<PageHandler>();
-//        PageHandler pageHandler = new PageHandler();
-//        if(lgFlg){
-//            
-//        }
-//        for (String form : argss) {
-//
-//            Map<String, String> paramsPost = new HashMap<String, String>();
-//            // paramsPost.put("jspno", "S" + getName(i));
-//            paramsPost.put("jspno", form);
-//            paramsPost.put("language", "en");
-//
-////            PageHandler pageHandler = new PageHandler("PAGE URL",
-////                    "HOST URL", paramsPost, new PolisyParser());
-//            // Thread worker = new Thread(pageHandler);
-//            // worker.start();
-//            // resultRunList.add(pageHandler);
-//            // workers.add(worker);
-//            pageHandler.run();
-//            // System.out.println(i);
-//        }
-//        // for (Thread worker : workers) {
-//        // worker.join();
-//        // }
-//    }
-
-    public static String getName(int count) {
-        return String.format("%04d", count);
+        List<String> result = new ArrayList<String>();
+        Random rd = new Random();
+        for(int i = 0;i<10;i++){// TODO
+            PageHandler pageHandler = new PageHandler("",new ShaobingParser());
+            pageHandler.run();
+            result.addAll((List<String>)pageHandler.getResult());
+            int timer = (1+rd.nextInt(5))*1000;
+            TimeUnit.SECONDS.sleep(timer);
+        }
     }
+    
+    
+
 
 }
