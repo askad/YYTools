@@ -1,5 +1,7 @@
 package yy.spider;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
 
 import yy.common.Logger;
@@ -15,6 +17,7 @@ public class PageHandler implements Runnable {
     private Map<String, String> postParams;
     private PageParser pageParser;
     private Object result;
+    private int reTimes = 3;
 
     public PageHandler(String url, PageParser pageParser) {
         super();
@@ -25,6 +28,7 @@ public class PageHandler implements Runnable {
     @Override
     public void run() {
         WebContainer wc = new WebContainer();
+        wc.setSslFlag(true);
         String pageContent = null;
         String tempurl = null;
         try {
@@ -35,8 +39,23 @@ public class PageHandler implements Runnable {
             pageContent = wc.getRequest(mainPageUrl, null);
             result = pageParser.parser(pageContent);
             pageParser.afterParser(result);
+            reTimes = 3;
         } catch (Exception e) {
-            logger.log(e.getMessage());
+            if(reTimes>0){
+                reTimes--;
+                run();
+            }
+            logger.log(e.getMessage()+":yy:"+mainPageUrl);
+        }
+    }
+    
+    protected void writeResult(String filename){
+        try {
+            FileWriter fw = new FileWriter(filename);
+            fw.write(result.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -22,6 +22,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
@@ -35,7 +36,7 @@ public class WebContainer {
 
     private String encoding;
     private String referUrl;
-    private DefaultHttpClient httpclient;
+    private CloseableHttpClient httpclient;
     private boolean sslFlag = false;// To use SSL set it true.
     private boolean mstFlag = false;// To shutdown manually set it true.
     private Map<String, String> mapheader;
@@ -72,34 +73,6 @@ public class WebContainer {
         this.mapheader = mapheader;
     }
 
-    public String logonSession(String url, Map<String, String> params) throws Exception {
-
-        httpclient = YYClientConnManagerFactory.getClientConnMangerInstance(encoding, sslFlag);
-        HttpPost httpost = new GenHttpPost(url, mapheader);
-        // 添加参数
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        if (params != null && params.keySet().size() > 0) {
-            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, String> entry = (Entry<String, String>) iterator.next();
-                nvps.add(new BasicNameValuePair((String) entry.getKey(), (String) entry.getValue()));
-            }
-        }
-        // 设置请求的编码格式
-        httpost.setEntity(new UrlEncodedFormEntity(nvps, encoding));
-        // 登录一遍
-        HttpResponse response = httpclient.execute(httpost);
-        if (404 == response.getStatusLine().getStatusCode()) {
-            throw new Exception("404");
-        }
-        if (500 == response.getStatusLine().getStatusCode()) {
-            throw new Exception("500");
-        }
-        // 得到返回的client里面的实体对象信息.
-        HttpEntity entity = response.getEntity();
-        return showPage(entity);
-    }
-
     public String postRequest(String url, Map<String, String> params) throws Exception {
         HttpPost httpost = new GenHttpPost(url, mapheader);
         if (referUrl != null && !referUrl.isEmpty()) {
@@ -121,6 +94,13 @@ public class WebContainer {
             httpclient = YYClientConnManagerFactory.getClientConnMangerInstance(encoding, sslFlag);
         }
         HttpResponse response = httpclient.execute(httpost);
+        
+        if (404 == response.getStatusLine().getStatusCode()) {
+            throw new Exception("404");
+        }
+        if (500 == response.getStatusLine().getStatusCode()) {
+            throw new Exception("500");
+        }
         HttpEntity entity = response.getEntity();
 
         return showPage(entity);
@@ -202,7 +182,11 @@ public class WebContainer {
 
     public void shutDownCon() {
         // 关闭请求
-        httpclient.getConnectionManager().shutdown();
+        try {
+            httpclient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String showPage(HttpEntity entity) throws Exception {
